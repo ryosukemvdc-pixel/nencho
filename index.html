@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>年末調整</title>
+</head>
+<body style="font-family:sans-serif;padding:24px;line-height:1.8;color:#1d2330">
+  <p id="msg">読み込んでいます…</p>
+  <script>
+    // 年末調整システム（管理マスタの Apps Script）の入口。
+    // 画面のHTMLを doPost で受け取って表示する。Google のログイン状態に左右されない。
+    var API_URL = 'https://script.google.com/macros/s/AKfycbwcjjiIxoo4bdQFoC-kZP6gkddmNOgIu55nNJR9wEKU5z5LIBp9JhYbkwkxDuEAclUhrw/exec';
+    var token = new URLSearchParams(location.search).get('t') || '';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: 'page', args: [token] })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.error);
+        document.open();
+        document.write(res.result.html);
+        document.close();
+        document.title = res.result.title;
+      })
+      .catch(function (e) {
+        document.getElementById('msg').textContent =
+          '画面を読み込めませんでした。時間をおいて、もう一度開いてください。（' + e.message + '）';
+      });
+  </script>
+</body>
+</html>
